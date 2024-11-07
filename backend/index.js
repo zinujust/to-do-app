@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 require('dotenv').config();
 const cors = require('cors');
+const morgan = require('morgan');
 
 const taskRouter = require('./routes/tasks');
 const authRouter = require('./routes/auth')
@@ -16,19 +17,27 @@ app.use('/tasks', taskRouter);
 app.use('/auth', authRouter)
 
 const dbURI = process.env.NODE_ENV === 'production' ? process.env.DB_URI_PROD : process.env.DB_URI_DEV;
+
+if(process.env.NODE_ENV === 'development'){
+    app.use(morgan('dev'));
+}
+else {
+    app.use(morgan('combined'));
+}
+
 mongoose.connect(dbURI)
     .then(() => {
-        console.log(`Connected to MongoDB ${process.env.NODE_ENV} database`);
+        logger.info(`Connected to MongoDB ${process.env.NODE_ENV} database`);
     })
     .catch(err => {
-        console.error(`MongoDB Connection error: , ${err}`)
+        logger.info(`MongoDB Connection error: , ${err}`)
     })
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    logger.info(`Server is running on port ${PORT}`);
 });
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    logger.error(`${err.message} - ${req.originalUrl} - ${req.method} ${req.ip}`);
     res.status(500).json({message: 'An error occurred'}); // Fix typo: jason -> json
 })
