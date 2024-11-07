@@ -4,11 +4,35 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
-const logger = require('./utils/logger')
+const logger = require('./utils/logger');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
+
+const options = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'MERN To-do API',
+            version: '1.0.0',
+            description: 'API Documentation for the MERN to-do Application',
+
+        },
+        servers: [
+            {
+                url: `http://localhost:${PORT}`,
+            },
+        ],
+    },
+    apis: [`./routes/*.js`],
+};
+
+const specs = swaggerJsDoc(options);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // Import routers
 const taskRouter = require('./routes/tasks');
 const authRouter = require('./routes/auth');
+const { info } = require('winston');
 
 // Initialize express app
 const app = express();

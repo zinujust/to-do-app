@@ -6,6 +6,13 @@ const { check } = require('express-validator');
 
 router.use(auth);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Tasks
+ *   description: Task management
+ */
+
 // Create a new task
 router.post('/', 
     [
@@ -28,6 +35,22 @@ router.post('/',
             res.status(400).json({message: error.message});
         }
 });
+
+/**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     summary: Get all tasks for the authenticated user
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of tasks
+ *       401:
+ *         description: Unauthorized
+ */
+
 
 // Get all tasks
 router.get('/', async (req, res) => {
