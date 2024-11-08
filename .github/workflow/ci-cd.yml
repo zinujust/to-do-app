@@ -37,7 +37,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./backend # Specify the backend directory
+        working-directory: ../backend # Specify the backend directory
 
     steps:
       - name: Checkout code
