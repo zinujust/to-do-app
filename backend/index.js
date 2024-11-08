@@ -8,6 +8,18 @@ const logger = require('./utils/logger');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 
+
+// Import routers
+const taskRouter = require('./routes/tasks');
+const authRouter = require('./routes/auth');
+const { info } = require('winston');
+
+// Initialize express app
+const app = express();
+
+// Set the port
+const PORT = process.env.PORT || 3000;
+
 const options = {
     definition: {
         openapi: '3.0.0',
@@ -15,7 +27,7 @@ const options = {
             title: 'MERN To-do API',
             version: '1.0.0',
             description: 'API Documentation for the MERN to-do Application',
-
+            
         },
         servers: [
             {
@@ -28,17 +40,6 @@ const options = {
 
 const specs = swaggerJsDoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-
-// Import routers
-const taskRouter = require('./routes/tasks');
-const authRouter = require('./routes/auth');
-const { info } = require('winston');
-
-// Initialize express app
-const app = express();
-
-// Set the port
-const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors()); // Enable CORS
@@ -76,3 +77,5 @@ app.use((err, req, res, next) => {
     logger.error(`${err.message} - ${req.originalUrl} - ${req.method} ${req.ip}`);
     res.status(500).json({ message: 'An error occurred' }); // Fix typo: jason -> json
 });
+
+module.exports = app
