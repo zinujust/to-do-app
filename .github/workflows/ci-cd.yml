@@ -1,0 +1,24 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend # Specify the backend directory
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy backend to Heroku
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git push -f heroku `git subtree split --prefix backend main`:main
